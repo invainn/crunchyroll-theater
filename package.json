@@ -1,0 +1,25 @@
+{
+  "name": "crunchyroll-theater",
+  "description": "Extends Crunchyroll's player to the full width and height of the browser for all resolutions",
+  "version": "0.4.1",
+  "license": "MIT",
+  "scripts": {
+    "css-build": "sass src/css/popup.scss public/css/popup.css",
+    "css-watch": "yarn run css-build --watch",
+    "build": "yarn run css-build && yarn run ts-build",
+    "ts-build": "tsc",
+    "ts-watch": "tsc --watch",
+    "watch": "npm-run-all --parallel css-watch ts-watch",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "bulma": "0.9.3",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.3.2",
+    "sass": "^1.35.1",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "@types/chrome": "^0.0.145"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "manifest_version": 3,
+
+  "name": "Crunchyroll Theater",
+  "version": "0.4.1",
+  "description": "Extends Crunchyroll's player to the full width and height of the browser for all resolutions",
+
+  "permissions": [
+    "storage",
+    "webNavigation",
+    "scripting",
+    "tabs"
+  ],
+
+  "host_permissions": [
+    "https://crunchyroll.com/*",
+    "https://static.crunchyroll.com/*",
+    "https://beta.crunchyroll.com/*"
+  ],
+
+  "action": {
+    "default_title": "Crunchyroll Theater",
+    "default_popup": "html/popup.html"
+  },
+
+  "icons": {
+    "48": "images/48x48.png",
+    "128": "images/128x128.png"
+  },
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.crunchyroll.com/*/episode*",
+        "https://www.crunchyroll.com/*/*ova*",
+        "https://www.crunchyroll.com/*/*pv*"
+      ],
+      "js": ["js/legacy_content.js"]
+    },
+    {
+      "matches": ["*://beta.crunchyroll.com/*"],
+      "js": ["js/beta_content.js"]
+    },
+    {
+      "matches": ["https://static.crunchyroll.com/*"],
+      "css": ["css/player.css"],
+      "js": ["js/player.js"],
+      "all_frames": true
+    }
+  ],
+
+  "commands": {
+    "toggleHeader": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Comma"
+      },
+      "description": "Toggles Crunchyroll's header"
+    },
+    "toggleScrollbar": {
+      "suggested_key": {
+        "default": "Ctrl+Period"
+      },
+      "description": "Toggles Scrollbar"
+    },
+    "skipTime": {
+      "suggested_key": {
+        "default": "Ctrl+Right"
+      },
+      "description": "Skip 90 seconds of video"
+    }
+  }
+}
