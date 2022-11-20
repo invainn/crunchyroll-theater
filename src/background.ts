@@ -11,7 +11,7 @@ chrome.commands.onCommand.addListener((command: string): void => {
     currentWindow: true,
   };
 
-  chrome.tabs.query(queryInfo, (tabs: chrome.tabs.Tab[]) => {
+  chrome.tabs.query(queryInfo, (tabs: chrome.tabs.Tab[]): void => {
     if (tabs[0].id) {
       chrome.tabs.sendMessage(tabs[0].id, {
         msg: eventMappings[command],
@@ -32,7 +32,7 @@ const modifyWatchPage = async ({
       target: { tabId },
       files: ["./css/watch_page.css"],
   };
-  if (url.includes("beta.crunchyroll.com/watch")) {
+  if (url.includes("crunchyroll.com/watch")) {
     await chrome.scripting.insertCSS(watchPageCSSInjection);
   } else {
     // TODO: Fix this when removeCSS gets added to scripting types
@@ -48,14 +48,15 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(modifyWatchPage);
 chrome.webNavigation.onDOMContentLoaded.addListener(modifyWatchPage);
 
 // Pause player when user switches tabs
-chrome.tabs.onActivated.addListener(async (activeInfo: chrome.tabs.TabChangeInfo): void => {
-  const tabId: number = activeInfo.tabId;
-  const url: string = await chrome.tabs.get(tabId, {
-    active: true,
-    currentWindow: true,
-  }).then((tab: chrome.tabs.Tab): string => tab.url);
-  if (!url.includes("crunchyroll")) return;
-  chrome.tabs.sendMessage(tabId, {
-    msg: "pause_video",
-  });
-}
+// chrome.tabs.onActivated.addListener(async (activeInfo: chrome.tabs.TabChangeInfo): void => {
+//     const tabId: number = activeInfo.tabId;
+//     const url: string = await chrome.tabs.get(tabId, {
+//       active: true,
+//       currentWindow: true,
+//     }).then((tab: chrome.tabs.Tab): string => tab.url);
+//     if (!url.includes("crunchyroll")) return;
+//     chrome.tabs.sendMessage(tabId, {
+//       msg: "pause_video",
+//     });
+//   }
+// )

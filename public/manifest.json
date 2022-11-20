@@ -2,7 +2,7 @@
   "manifest_version": 3,
 
   "name": "Crunchyroll Theater",
-  "version": "0.4.1",
+  "version": "1.0.0",
   "description": "Extends Crunchyroll's player to the full width and height of the browser for all resolutions",
 
   "permissions": [
@@ -13,7 +13,7 @@
   ],
 
   "host_permissions": [
-    "https://crunchyroll.com/*",
+    "https://www.crunchyroll.com/*",
     "https://static.crunchyroll.com/*",
     "https://beta.crunchyroll.com/*"
   ],
@@ -34,16 +34,9 @@
 
   "content_scripts": [
     {
-      "matches": [
-        "https://www.crunchyroll.com/*/episode*",
-        "https://www.crunchyroll.com/*/*ova*",
-        "https://www.crunchyroll.com/*/*pv*"
-      ],
-      "js": ["js/legacy_content.js"]
-    },
-    {
-      "matches": ["*://beta.crunchyroll.com/*"],
-      "js": ["js/beta_content.js"]
+      "matches": ["https://www.crunchyroll.com/watch/*"],
+      "css": ["css/content.css"],
+      "js": ["js/content.js"]
     },
     {
       "matches": ["https://static.crunchyroll.com/*"],
@@ -65,12 +58,6 @@
         "default": "Ctrl+Period"
       },
       "description": "Toggles Scrollbar"
-    },
-    "skipTime": {
-      "suggested_key": {
-        "default": "Ctrl+Right"
-      },
-      "description": "Skip 90 seconds of video"
     }
   }
 }
