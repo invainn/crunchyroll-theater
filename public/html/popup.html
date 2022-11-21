@@ -1,19 +1,27 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello Bulma!</title>
+    <title>Bootstrap demo</title>
     <link rel="stylesheet" href="../css/popup.css">
   </head>
-  <body>
-  <section class="section">
-    <div class="container">
-      <h1 class="title">
-        Hello!
-      </h1>
+  <body class="bg-black bg-opacity-75 text-bg-dark fw-semibold">
+    <div class="m-2 container" id="switches">
+      <div class="col" style="min-width: 200px">
+        <div class="row form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="hide-header-switch">
+          <label class="form-check-label" for="hide-header-switch">Hide Header</label>
+        </div>
+        <div class="row form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="scrollbar-switch">
+          <label class="form-check-label" for="scrollbar-switch">Remove Scrollbar</label>
+        </div>
+      </div>
     </div>
-  </section>
-  <script type="text/javascript" src="../js/popup.js"></script>
+    <div class="m-2 container d-none text-center" id="not-on-page" style="width: 300px">
+      <p>You must be on Crunchyroll to change settings.</p>
+    </div>
+    <script type="text/javascript" src="../js/popup.js"></script>
   </body>
 </html>

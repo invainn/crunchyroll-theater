@@ -34,9 +34,10 @@
 
   "content_scripts": [
     {
-      "matches": ["https://www.crunchyroll.com/watch/*"],
+      "matches": ["https://www.crunchyroll.com/*"],
       "css": ["css/content.css"],
-      "js": ["js/content.js"]
+      "js": ["js/content.js"],
+      "run_at": "document_end"
     },
     {
       "matches": ["https://static.crunchyroll.com/*"],
@@ -47,13 +48,13 @@
   ],
 
   "commands": {
-    "toggleHeader": {
+    "toggle_header": {
       "suggested_key": {
-        "default": "Ctrl+Shift+Comma"
+        "default": "Ctrl+Shift+Period"
       },
       "description": "Toggles Crunchyroll's header"
     },
-    "toggleScrollbar": {
+    "toggle_scrollbar": {
       "suggested_key": {
         "default": "Ctrl+Period"
       },

@@ -1,9 +1,10 @@
+// TODO: probably scrap this too
 import { ElementState } from "./element-state";
 
 export interface ElementAction {
-	initialized: boolean;
+  initialized: boolean;
 
-	canExecuteAction(elementState: ElementState): boolean;
-	fetchElement(elementState: ElementState): Element;
-	execute(elementState: ElementState): void;
+  canExecuteAction?(elementState: ElementState): boolean;
+  fetchElement?(elementState: ElementState): Element;
+  execute(elementState: ElementState): void;
 }
