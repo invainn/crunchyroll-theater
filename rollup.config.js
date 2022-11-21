@@ -1,8 +1,7 @@
 import merge from "deepmerge";
 import typescript from "@rollup/plugin-typescript";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-import { createBasicConfig } from '@open-wc/building-rollup';
-
+import { createBasicConfig } from "@open-wc/building-rollup";
 
 const baseConfig = createBasicConfig();
 
@@ -24,9 +23,9 @@ export default [
     plugins: [typescript()],
   }),
   merge(baseConfig, {
-    input: "src/background.ts",
+    input: "src/js/background.ts",
     output: {
-      file: "public/background.js",
+      file: "public/js/background.js",
       dir: undefined,
     },
     plugins: [typescript()],
