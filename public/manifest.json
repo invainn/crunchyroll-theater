@@ -8,14 +8,12 @@
   "permissions": [
     "storage",
     "webNavigation",
-    "scripting",
     "tabs"
   ],
 
   "host_permissions": [
     "https://www.crunchyroll.com/*",
-    "https://static.crunchyroll.com/*",
-    "https://beta.crunchyroll.com/*"
+    "https://static.crunchyroll.com/*"
   ],
 
   "action": {
