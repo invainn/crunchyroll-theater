@@ -36,7 +36,7 @@ export class HeaderAction implements ElementAction {
       (hideHeader) => {
         HeaderAction.toggleHeader(elementState, hideHeader as boolean);
         HeaderAction.toggleHeaderTheater(elementState, true);
-      }
+      },
     );
   }
 
@@ -54,7 +54,7 @@ export class HeaderAction implements ElementAction {
 
   static toggleHeaderTheater(
     elementState: ElementState,
-    headerTheaterOn: boolean
+    headerTheaterOn: boolean,
   ): void {
     const header = HeaderAction.fetchElement(elementState) as HTMLElement;
     ChromeStorage.fetchStorageValue(HIDE_HEADER_STORAGE_KEY).then(
@@ -86,7 +86,7 @@ export class HeaderAction implements ElementAction {
           header.onmouseleave = null;
           HeaderAction.toggleHeader(elementState, false);
         }
-      }
+      },
     );
   }
 }

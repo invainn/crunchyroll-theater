@@ -19,30 +19,30 @@ declare global {
 
 const mutationObserverHandler = new MutationObserverHandler(
   new HeaderAction(),
-  new VideoWrapperAction()
+  new VideoWrapperAction(),
 );
 
 chrome.runtime.onMessage.addListener(async (req) => {
   if (req.msg === TOGGLE_HEADER_MESSAGE && globalThis.initializedVideoPage) {
     const hideHeader = await ChromeStorage.fetchStorageValue(
-      HIDE_HEADER_STORAGE_KEY
+      HIDE_HEADER_STORAGE_KEY,
     );
     ChromeStorage.setStorageKey(HIDE_HEADER_STORAGE_KEY, !hideHeader);
 
     HeaderAction.toggleHeader(
       mutationObserverHandler.elementState,
-      !hideHeader as boolean
+      !hideHeader as boolean,
     );
     HeaderAction.toggleHeaderTheater(
       mutationObserverHandler.elementState,
-      true
+      true,
     );
     VideoWrapperAction.toggleVideoPlayerSpacing(!hideHeader as boolean);
   }
 
   if (req.msg === TOGGLE_SCROLLBAR_MESSAGE) {
     const removeScrollbar = await ChromeStorage.fetchStorageValue(
-      REMOVE_SCROLLBAR_STORAGE_KEY
+      REMOVE_SCROLLBAR_STORAGE_KEY,
     );
     ChromeStorage.setStorageKey(REMOVE_SCROLLBAR_STORAGE_KEY, !removeScrollbar);
     ScrollbarAction.toggleScrollbar(!removeScrollbar);

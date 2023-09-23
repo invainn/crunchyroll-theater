@@ -18,7 +18,7 @@ function mapSettingToSwitch(
   setting: string,
   switchId: string,
   tabId: number,
-  tabMessage: string
+  tabMessage: string,
 ): void {
   ChromeStorage.fetchStorageValue(setting).then((setting) => {
     const switchElement = fetchElementById(switchId) as HTMLInputElement;
@@ -45,13 +45,13 @@ chrome.tabs.query(queryInfo, (tabs: chrome.tabs.Tab[]) => {
       HIDE_HEADER_STORAGE_KEY,
       "hide-header-switch",
       tabs[0].id,
-      TOGGLE_HEADER_MESSAGE
+      TOGGLE_HEADER_MESSAGE,
     );
     mapSettingToSwitch(
       REMOVE_SCROLLBAR_STORAGE_KEY,
       "scrollbar-switch",
       tabs[0].id,
-      TOGGLE_SCROLLBAR_MESSAGE
+      TOGGLE_SCROLLBAR_MESSAGE,
     );
   } else {
     const switches = fetchElementById("switches") as HTMLElement;

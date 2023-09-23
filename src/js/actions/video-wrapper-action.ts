@@ -21,7 +21,7 @@ export class VideoWrapperAction {
     ChromeStorage.fetchStorageValue(HIDE_HEADER_STORAGE_KEY).then(
       (hideHeader) => {
         VideoWrapperAction.toggleVideoPlayerSpacing(hideHeader as boolean);
-      }
+      },
     );
   }
 

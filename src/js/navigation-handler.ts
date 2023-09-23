@@ -17,7 +17,7 @@ export class NavigationHandler {
         elementState.checkElementExistsByClassName(
           HEADER,
           HEADER_CONTAINER,
-          VIDEO_WRAPPER
+          VIDEO_WRAPPER,
         )
       ) {
         if (globalThis.initializedVideoPage) return;
@@ -42,7 +42,7 @@ export class NavigationHandler {
         (removeScrollBar) => {
           ScrollbarAction.initialized = true;
           ScrollbarAction.toggleScrollbar(removeScrollBar as boolean);
-        }
+        },
       );
     }
   }

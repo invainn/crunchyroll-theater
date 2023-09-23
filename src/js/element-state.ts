@@ -42,28 +42,28 @@ export class ElementState {
   public fetchStateById(elementId: string): Element {
     return this.fetchStateByMethod(
       elementId,
-      document.getElementById.bind(document)
+      document.getElementById.bind(document),
     );
   }
 
   public fetchStateByClassName(elementClassName: string): Element {
     return this.fetchStateByMethod(
       elementClassName,
-      document.getElementsByClassName.bind(document)
+      document.getElementsByClassName.bind(document),
     );
   }
 
   public checkElementExistsById(...ids: string[]): boolean {
     return this.checkElementExistByMethod(
       this.fetchStateById.bind(this),
-      ...ids
+      ...ids,
     );
   }
 
   public checkElementExistsByClassName(...ids: string[]): boolean {
     return this.checkElementExistByMethod(
       this.fetchStateByClassName.bind(this),
-      ...ids
+      ...ids,
     );
   }
 }
