@@ -1,41 +1,40 @@
-import merge from "deepmerge";
 import typescript from "@rollup/plugin-typescript";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-import { createBasicConfig } from "@open-wc/building-rollup";
+import terser from "@rollup/plugin-terser";
 
-const baseConfig = createBasicConfig();
+const build = process.env.BUILD === "true";
 
 export default [
-  merge(baseConfig, {
+  {
     input: "src/js/content.ts",
     output: {
-      file: "public/js/content.js",
-      dir: undefined,
+      dir: "public/js",
+      format: "cjs",
     },
-    plugins: [typescript()],
-  }),
-  merge(baseConfig, {
+    plugins: [typescript(), nodeResolve(), build && terser()],
+  },
+  {
     input: "src/js/player.ts",
     output: {
-      file: "public/js/player.js",
-      dir: undefined,
+      dir: "public/js",
+      format: "cjs",
     },
-    plugins: [typescript()],
-  }),
-  merge(baseConfig, {
+    plugins: [typescript(), nodeResolve(), build && terser()],
+  },
+  {
     input: "src/js/background.ts",
     output: {
-      file: "public/js/background.js",
-      dir: undefined,
+      dir: "public/js",
+      format: "cjs",
     },
-    plugins: [typescript()],
-  }),
-  merge(baseConfig, {
+    plugins: [typescript(), nodeResolve(), build && terser()],
+  },
+  {
     input: "src/js/popup.ts",
     output: {
-      file: "public/js/popup.js",
-      dir: undefined,
+      dir: "public/js",
+      format: "es",
     },
-    plugins: [typescript(), nodeResolve()],
-  }),
+    plugins: [typescript(), nodeResolve(), build && terser()],
+  },
 ];
