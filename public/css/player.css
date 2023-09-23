@@ -1,0 +1,24 @@
+.erc-watch-episode .erc-watch-episode-layout .video-player-wrapper {
+  height: 100vh;
+  max-height: 100vh;
+  margin-top: -60.984px;
+}
+
+.controls-container {
+  display: flex;
+  cursor: pointer;
+  height: 100%;
+}
+
+.controls-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#vilosRoot,
+#vilosRoot.ct-player-container {
+	height: 100vh;
+}

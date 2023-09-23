@@ -1,4 +1,4 @@
-export const HEADER: "erc-header" = "erc-header" as const;
+export const HEADER: "erc-large-header" = "erc-large-header" as const;
 export const HEADER_CONTAINER: "header-content" = "header-content" as const;
 
 export const VIDEO_WRAPPER: "video-player-wrapper" =
