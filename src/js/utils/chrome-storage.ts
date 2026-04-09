@@ -9,13 +9,8 @@ export class ChromeStorage {
 
   public static async fetchStorageValue(key: string): Promise<StorageValue> {
     return new Promise((resolve) => {
-      chrome.storage.sync.get([key], (keys) => {
-        if (!keys) {
-          this.setStorageKey(key, true);
-          resolve(true);
-        }
-
-        resolve(keys[key]);
+      chrome.storage.sync.get([key], (result) => {
+        resolve(result[key] ?? false);
       });
     });
   }

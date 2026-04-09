@@ -11,6 +11,10 @@ export class ScrollbarAction {
       "html::-webkit-scrollbar{display:none !important}";
     removeScrollbarElement.textContent +=
       "body::-webkit-scrollbar{display:none !important}";
+    removeScrollbarElement.textContent +=
+      "html{scrollbar-width:none !important}";
+    removeScrollbarElement.textContent +=
+      "body{scrollbar-width:none !important}";
 
     return removeScrollbarElement;
   }
