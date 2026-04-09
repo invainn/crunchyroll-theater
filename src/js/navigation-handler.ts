@@ -1,7 +1,7 @@
-import { ElementState } from "./element-state";
 import {
   HEADER,
   HEADER_CONTAINER,
+  HIDE_HEADER_STORAGE_KEY,
   REMOVE_SCROLLBAR_STORAGE_KEY,
   VIDEO_WRAPPER,
 } from "./utils/constants";
@@ -10,32 +10,34 @@ import { ChromeStorage } from "./utils/chrome-storage";
 import { VideoWrapperAction } from "./actions/video-wrapper-action";
 import { ScrollbarAction } from "./actions/scrollbar-action";
 
+function elementsExistByClassName(...classNames: string[]): boolean {
+  return classNames.every(
+    (cn) => document.getElementsByClassName(cn).length > 0,
+  );
+}
+
 export class NavigationHandler {
-  static handle(elementState: ElementState): void {
-    ChromeStorage.fetchStorageValue("hideHeader").then((hideHeader) => {
-      if (
-        elementState.checkElementExistsByClassName(
-          HEADER,
-          HEADER_CONTAINER,
-          VIDEO_WRAPPER,
-        )
-      ) {
-        if (globalThis.initializedVideoPage) return;
+  static handle(): void {
+    ChromeStorage.fetchStorageValue(HIDE_HEADER_STORAGE_KEY).then(
+      (hideHeader) => {
+        if (
+          elementsExistByClassName(HEADER, HEADER_CONTAINER, VIDEO_WRAPPER)
+        ) {
+          if (globalThis.initializedVideoPage) return;
 
-        globalThis.initializedVideoPage = true;
-        HeaderAction.toggleHeader(elementState, hideHeader as boolean);
-        HeaderAction.toggleHeaderTheater(elementState, true);
-        VideoWrapperAction.toggleVideoPlayerSpacing(hideHeader as boolean);
-      } else if (
-        elementState.checkElementExistsByClassName(HEADER, HEADER_CONTAINER)
-      ) {
-        if (!globalThis.initializedVideoPage) return;
+          globalThis.initializedVideoPage = true;
+          HeaderAction.toggleHeader(hideHeader as boolean);
+          HeaderAction.toggleHeaderTheater(true);
+          VideoWrapperAction.toggleVideoPlayerSpacing(hideHeader as boolean);
+        } else if (elementsExistByClassName(HEADER, HEADER_CONTAINER)) {
+          if (!globalThis.initializedVideoPage) return;
 
-        globalThis.initializedVideoPage = false;
-        HeaderAction.toggleHeader(elementState, false);
-        HeaderAction.toggleHeaderTheater(elementState, false);
-      }
-    });
+          globalThis.initializedVideoPage = false;
+          HeaderAction.toggleHeader(false);
+          HeaderAction.toggleHeaderTheater(false);
+        }
+      },
+    );
 
     if (!ScrollbarAction.initialized) {
       ChromeStorage.fetchStorageValue(REMOVE_SCROLLBAR_STORAGE_KEY).then(

@@ -1,23 +1,17 @@
 import { ChromeStorage } from "../utils/chrome-storage";
 import { HIDE_HEADER_STORAGE_KEY, VIDEO_WRAPPER } from "../utils/constants";
+import { ElementAction } from "../element-action";
 
-export class VideoWrapperAction {
+export class VideoWrapperAction implements ElementAction {
   initialized: boolean = false;
 
   canExecuteAction(): boolean {
     return document.getElementsByClassName(VIDEO_WRAPPER).length > 0;
   }
 
-  static fetchElement(): Element {
-    return document.getElementsByClassName(VIDEO_WRAPPER)[0];
-  }
-
   execute(): void {
-    if (!this.canExecuteAction()) return;
-
-    // TODO: super sloppy that we're not initializing here, but we need to check
-    // if the classes exist on the element, if not, then continue instead of initializing once
-    // since we can't guarantee that element will be there after we apply the changes
+    if (this.initialized || !this.canExecuteAction()) return;
+    this.initialized = true;
     ChromeStorage.fetchStorageValue(HIDE_HEADER_STORAGE_KEY).then(
       (hideHeader) => {
         VideoWrapperAction.toggleVideoPlayerSpacing(hideHeader as boolean);
@@ -26,7 +20,9 @@ export class VideoWrapperAction {
   }
 
   static toggleVideoPlayerSpacing(hideHeader: boolean): void {
-    const element = VideoWrapperAction.fetchElement();
+    const elements = document.getElementsByClassName(VIDEO_WRAPPER);
+    if (elements.length === 0) return;
+    const element = elements[0];
     element.classList.add("ct-specify");
     if (hideHeader) {
       element.classList.add("ct-video-wrapper");

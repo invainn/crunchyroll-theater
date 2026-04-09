@@ -4,45 +4,39 @@ import {
   HIDE_HEADER_STORAGE_KEY,
 } from "../utils/constants";
 import { ElementAction } from "../element-action";
-import { ElementState } from "../element-state";
 import { ChromeStorage } from "../utils/chrome-storage";
 
 export class HeaderAction implements ElementAction {
   initialized: boolean = false;
-  static scheduledAnimationFrame: boolean = false; // debouncing
+  static scheduledAnimationFrame: boolean = false;
 
-  canExecuteAction(elementState: ElementState): boolean {
+  canExecuteAction(): boolean {
     if (this.initialized) return false;
-    return elementState.checkElementExistsByClassName(HEADER, HEADER_CONTAINER);
+    return (
+      document.getElementsByClassName(HEADER).length > 0 &&
+      document.getElementsByClassName(HEADER_CONTAINER).length > 0
+    );
   }
 
-  static fetchElement(elementState: ElementState): Element {
-    return elementState.fetchStateByClassName(HEADER);
-  }
-
-  execute(elementState: ElementState): void {
-    if (
-      !this.canExecuteAction(elementState) ||
-      !globalThis.initializedVideoPage
-    )
-      return;
+  execute(): void {
+    if (!this.canExecuteAction() || !globalThis.initializedVideoPage) return;
 
     this.initialized = true;
-    const element = HeaderAction.fetchElement(elementState);
+    const element = document.getElementsByClassName(HEADER)[0];
     element.classList.toggle("ct-header");
 
-    // initialize hide header state
     ChromeStorage.fetchStorageValue(HIDE_HEADER_STORAGE_KEY).then(
       (hideHeader) => {
-        HeaderAction.toggleHeader(elementState, hideHeader as boolean);
-        HeaderAction.toggleHeaderTheater(elementState, true);
+        HeaderAction.toggleHeader(hideHeader as boolean);
+        HeaderAction.toggleHeaderTheater(true);
       },
     );
   }
 
-  static toggleHeader(elementState: ElementState, hideHeader: boolean): void {
-    const headerContainer =
-      elementState.fetchStateByClassName(HEADER_CONTAINER);
+  static toggleHeader(hideHeader: boolean): void {
+    const headers = document.getElementsByClassName(HEADER_CONTAINER);
+    if (headers.length === 0) return;
+    const headerContainer = headers[0];
     if (hideHeader) {
       headerContainer.classList.add("ct-hide-header");
       headerContainer.classList.add("ct-specify");
@@ -52,11 +46,10 @@ export class HeaderAction implements ElementAction {
     }
   }
 
-  static toggleHeaderTheater(
-    elementState: ElementState,
-    headerTheaterOn: boolean,
-  ): void {
-    const header = HeaderAction.fetchElement(elementState) as HTMLElement;
+  static toggleHeaderTheater(headerTheaterOn: boolean): void {
+    const headers = document.getElementsByClassName(HEADER);
+    if (headers.length === 0) return;
+    const header = headers[0] as HTMLElement;
     ChromeStorage.fetchStorageValue(HIDE_HEADER_STORAGE_KEY).then(
       (hideHeader) => {
         if (headerTheaterOn && hideHeader) {
@@ -65,8 +58,8 @@ export class HeaderAction implements ElementAction {
           header.onmouseenter = () => {
             if (HeaderAction.scheduledAnimationFrame) return;
             HeaderAction.scheduledAnimationFrame = true;
-            requestAnimationFrame(async () => {
-              HeaderAction.toggleHeader(elementState, false);
+            requestAnimationFrame(() => {
+              HeaderAction.toggleHeader(false);
               HeaderAction.scheduledAnimationFrame = false;
             });
           };
@@ -74,17 +67,16 @@ export class HeaderAction implements ElementAction {
           header.onmouseleave = () => {
             if (HeaderAction.scheduledAnimationFrame) return;
             HeaderAction.scheduledAnimationFrame = true;
-            requestAnimationFrame(async () => {
-              HeaderAction.toggleHeader(elementState, true);
+            requestAnimationFrame(() => {
+              HeaderAction.toggleHeader(true);
               HeaderAction.scheduledAnimationFrame = false;
             });
           };
         } else {
           header.classList.remove("ct-header-theater");
-
           header.onmouseenter = null;
           header.onmouseleave = null;
-          HeaderAction.toggleHeader(elementState, false);
+          HeaderAction.toggleHeader(false);
         }
       },
     );
