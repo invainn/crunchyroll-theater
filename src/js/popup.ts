@@ -22,7 +22,6 @@ function mapSettingToSwitch(
 ): void {
   ChromeStorage.fetchStorageValue(setting).then((setting) => {
     const switchElement = fetchElementById(switchId) as HTMLInputElement;
-    console.log(setting as boolean);
     switchElement.checked = setting as boolean;
     switchElement.onclick = () => {
       if (tabId) {

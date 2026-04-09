@@ -1,7 +1,6 @@
 import { HeaderAction } from "./actions/header-action";
 import { ScrollbarAction } from "./actions/scrollbar-action";
 import { VideoWrapperAction } from "./actions/video-wrapper-action";
-import { ElementState } from "./element-state";
 import { MutationObserverHandler } from "./mutation-handler";
 import { NavigationHandler } from "./navigation-handler";
 import { ChromeStorage } from "./utils/chrome-storage";
@@ -29,27 +28,23 @@ chrome.runtime.onMessage.addListener(async (req) => {
     );
     ChromeStorage.setStorageKey(HIDE_HEADER_STORAGE_KEY, !hideHeader);
 
-    HeaderAction.toggleHeader(
-      mutationObserverHandler.elementState,
-      !hideHeader as boolean,
-    );
-    HeaderAction.toggleHeaderTheater(
-      mutationObserverHandler.elementState,
-      true,
-    );
-    VideoWrapperAction.toggleVideoPlayerSpacing(!hideHeader as boolean);
+    HeaderAction.toggleHeader(!(hideHeader as boolean));
+    HeaderAction.toggleHeaderTheater(true);
+    VideoWrapperAction.toggleVideoPlayerSpacing(!(hideHeader as boolean));
   }
 
   if (req.msg === TOGGLE_SCROLLBAR_MESSAGE) {
     const removeScrollbar = await ChromeStorage.fetchStorageValue(
       REMOVE_SCROLLBAR_STORAGE_KEY,
     );
-    ChromeStorage.setStorageKey(REMOVE_SCROLLBAR_STORAGE_KEY, !removeScrollbar);
-    ScrollbarAction.toggleScrollbar(!removeScrollbar);
+    ChromeStorage.setStorageKey(
+      REMOVE_SCROLLBAR_STORAGE_KEY,
+      !removeScrollbar,
+    );
+    ScrollbarAction.toggleScrollbar(!(removeScrollbar as boolean));
   }
 
   if (req.msg === CLEAR_ELEMENT_STATE_MESSAGE) {
-    mutationObserverHandler.elementState = new ElementState();
-    NavigationHandler.handle(mutationObserverHandler.elementState);
+    NavigationHandler.handle();
   }
 });
