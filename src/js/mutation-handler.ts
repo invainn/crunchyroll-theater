@@ -11,8 +11,6 @@ export class MutationObserverHandler {
 
     this.observer.observe(document.body, {
       childList: true,
-      attributes: true,
-      characterData: false,
       subtree: true,
     });
   }

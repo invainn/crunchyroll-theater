@@ -16,7 +16,10 @@ declare global {
   var initializedVideoPage: boolean;
 }
 
-new MutationObserverHandler(new HeaderAction(), new VideoWrapperAction());
+const mutationObserverHandler = new MutationObserverHandler(
+  new HeaderAction(),
+  new VideoWrapperAction(),
+);
 
 chrome.runtime.onMessage.addListener(async (req) => {
   if (req.msg === TOGGLE_HEADER_MESSAGE && globalThis.initializedVideoPage) {
