@@ -4,15 +4,15 @@
   "version": "1.0.1",
   "license": "MIT",
   "scripts": {
-    "build": "rollup -c rollup.config.js && yarn css-build",
-    "start:build": "npm run build && es-dev-server --root-dir dist --app-index index.html --compatibility none --open",
+    "build": "rollup -c rollup.config.js && pnpm css-build",
+    "start:build": "pnpm build && es-dev-server --root-dir dist --app-index index.html --compatibility none --open",
     "css-build": "sass src/css/popup.scss public/css/popup.css",
-    "css-watch": "yarn run css-build --watch",
+    "css-watch": "pnpm css-build --watch",
     "ts-build": "tsc",
     "ts-watch": "tsc --watch",
     "watch": "npm-run-all --parallel css-watch ts-watch",
     "format": "prettier --write .",
-    "release": "cross-env BUILD=true npm run build && node release.js"
+    "release": "cross-env BUILD=true pnpm build && node release.js"
   },
   "devDependencies": {
     "@open-wc/building-rollup": "^3.0.2",
