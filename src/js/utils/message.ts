@@ -1,18 +1,12 @@
 import { CRUNCHYROLL_WEBSITE } from "./constants";
 
-const queryInfo: chrome.tabs.QueryInfo = {
-  active: true,
-  currentWindow: true,
-};
+export function sendMessageToTab(
+  tab: chrome.tabs.Tab | undefined,
+  msg: string,
+): void {
+  if (!tab?.id || !tab.url?.startsWith(CRUNCHYROLL_WEBSITE)) return;
 
-export function sendMessageToCurrentTab(msg: string): void {
-  chrome.tabs.query(queryInfo, (tabs: chrome.tabs.Tab[]): void => {
-    if (
-      tabs[0].id &&
-      tabs[0].url?.includes(CRUNCHYROLL_WEBSITE) &&
-      tabs[0].status === "complete"
-    ) {
-      chrome.tabs.sendMessage(tabs[0].id, { msg });
-    }
-  });
+  // The content script may not be injected yet (tab still loading, or the
+  // extension was just reloaded); nothing is listening, so drop the message.
+  chrome.tabs.sendMessage(tab.id, { msg }).catch(() => {});
 }

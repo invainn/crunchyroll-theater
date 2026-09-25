@@ -11,7 +11,7 @@
 }
 
 .erc-header.ct-header-theater {
-	display: absolute;
+	position: absolute;
 }
 
 .video-player-wrapper.ct-specify.ct-video-wrapper {

@@ -1,9 +1,7 @@
 import { ElementAction } from "./element-action";
-import { ElementState } from "./element-state";
 import { NavigationHandler } from "./navigation-handler";
 
 export class MutationObserverHandler {
-  elementState: ElementState = new ElementState();
   observer: MutationObserver;
   actions: ElementAction[];
 
@@ -13,22 +11,18 @@ export class MutationObserverHandler {
 
     this.observer.observe(document.body, {
       childList: true,
-      attributes: true,
-      characterData: false,
       subtree: true,
     });
   }
 
   observerCallback(mutations: MutationRecord[]) {
-    mutations.forEach((mutation) => {
-      if (mutation.type === "childList") {
-        this.actions.forEach((action) => {
-          action.execute(this.elementState);
-        });
+    const hasAddedNodes = mutations.some((m) => m.addedNodes.length > 0);
+    if (!hasAddedNodes) return;
 
-        // TODO: pretty hacky, need to fire this on initial page load when header is loaded but whatever
-        NavigationHandler.handle(this.elementState);
-      }
-    });
+    // Navigation state first: actions such as HeaderAction only run once the
+    // page is known to be a watch page, so this lets them apply in the same
+    // mutation batch instead of waiting for the next DOM change.
+    NavigationHandler.handle();
+    this.actions.forEach((action) => action.execute());
   }
 }

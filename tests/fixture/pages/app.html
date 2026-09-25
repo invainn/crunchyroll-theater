@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Crunchyroll (fixture)</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: sans-serif;
+      }
+      .erc-large-header {
+        position: relative;
+        height: 60px;
+        background: #23252b;
+      }
+      .header-content {
+        height: 60px;
+        color: #fff;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        padding: 0 1rem;
+      }
+      .header-content a {
+        color: #f47521;
+      }
+      .video-player-wrapper {
+        height: 56.25vw;
+        max-height: calc(100vh - 60px);
+        background: #000;
+      }
+      .video-player-wrapper iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+      .filler {
+        height: 150vh;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      Mirrors the structure of www.crunchyroll.com as captured 2026-09-24:
+      the header persists across SPA navigations, and between two episodes
+      the .video-player-wrapper node is reused (not re-created).
+    -->
+    <div id="content">
+      <div class="app-layout__header">
+        <header class="erc-large-header" data-t="header-default">
+          <div class="container header-content">
+            <a href="/" data-link>Home</a>
+            <a href="/series/SERIES1/fixture-series" data-link>Series</a>
+            <a href="/watch/EP1/episode-one" data-link>Episode 1</a>
+            <a href="/watch/EP2/episode-two" data-link>Episode 2</a>
+          </div>
+        </header>
+      </div>
+      <main id="main"></main>
+    </div>
+    <script>
+      const main = document.getElementById("main");
+
+      function renderWatch(episode) {
+        let layout = main.querySelector(".erc-watch-episode-layout");
+        if (!layout) {
+          main.innerHTML = `
+            <div class="erc-watch-episode">
+              <div class="erc-watch-episode-layout">
+                <div class="video-player-wrapper">
+                  <div class="video-player-spacer"></div>
+                  <iframe class="video-player" src="https://static.crunchyroll.com/vilos-v2/web/vilos/player.html"></iframe>
+                </div>
+                <div class="erc-current-media-info"><h1 class="title"></h1></div>
+              </div>
+            </div>
+            <div class="filler"></div>`;
+          layout = main.querySelector(".erc-watch-episode-layout");
+        }
+        layout.querySelector(".title").textContent = episode;
+      }
+
+      function renderSeries() {
+        main.innerHTML = `
+          <div class="erc-series-hero"><h1>Fixture Series</h1></div>
+          <div class="filler"></div>`;
+      }
+
+      function renderHome() {
+        main.innerHTML = `<div class="erc-browse"><h1>Home</h1></div><div class="filler"></div>`;
+      }
+
+      function render() {
+        const [, section, id] = location.pathname.split("/");
+        if (section === "watch") renderWatch(id);
+        else if (section === "series") renderSeries();
+        else renderHome();
+      }
+
+      document.addEventListener("click", (e) => {
+        const link = e.target.closest("a[data-link]");
+        if (!link) return;
+        e.preventDefault();
+        history.pushState({}, "", link.getAttribute("href"));
+        render();
+      });
+      window.addEventListener("popstate", render);
+
+      // Like the real site, content renders after the initial HTML (the
+      // extension runs at document_end and relies on the MutationObserver).
+      setTimeout(render, 50);
+    </script>
+  </body>
+</html>
