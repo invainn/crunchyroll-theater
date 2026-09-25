@@ -19,7 +19,10 @@ export class MutationObserverHandler {
     const hasAddedNodes = mutations.some((m) => m.addedNodes.length > 0);
     if (!hasAddedNodes) return;
 
-    this.actions.forEach((action) => action.execute());
+    // Navigation state first: actions such as HeaderAction only run once the
+    // page is known to be a watch page, so this lets them apply in the same
+    // mutation batch instead of waiting for the next DOM change.
     NavigationHandler.handle();
+    this.actions.forEach((action) => action.execute());
   }
 }

@@ -25,9 +25,7 @@ function mapSettingToSwitch(
     switchElement.checked = setting as boolean;
     switchElement.onclick = () => {
       if (tabId) {
-        chrome.tabs.sendMessage(tabId, {
-          msg: tabMessage,
-        });
+        chrome.tabs.sendMessage(tabId, { msg: tabMessage }).catch(() => {});
       }
     };
   });
@@ -39,17 +37,18 @@ const queryInfo: chrome.tabs.QueryInfo = {
 };
 
 chrome.tabs.query(queryInfo, (tabs: chrome.tabs.Tab[]) => {
-  if (tabs[0].url?.includes(CRUNCHYROLL_WEBSITE) && tabs[0].id) {
+  const tab = tabs[0];
+  if (tab?.id && tab.url?.startsWith(CRUNCHYROLL_WEBSITE)) {
     mapSettingToSwitch(
       HIDE_HEADER_STORAGE_KEY,
       "hide-header-switch",
-      tabs[0].id,
+      tab.id,
       TOGGLE_HEADER_MESSAGE,
     );
     mapSettingToSwitch(
       REMOVE_SCROLLBAR_STORAGE_KEY,
       "scrollbar-switch",
-      tabs[0].id,
+      tab.id,
       TOGGLE_SCROLLBAR_MESSAGE,
     );
   } else {

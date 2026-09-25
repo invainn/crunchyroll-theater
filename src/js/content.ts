@@ -16,35 +16,36 @@ declare global {
   var initializedVideoPage: boolean;
 }
 
-const mutationObserverHandler = new MutationObserverHandler(
-  new HeaderAction(),
-  new VideoWrapperAction(),
-);
+new MutationObserverHandler(new HeaderAction(), new VideoWrapperAction());
 
-chrome.runtime.onMessage.addListener(async (req) => {
-  if (req.msg === TOGGLE_HEADER_MESSAGE && globalThis.initializedVideoPage) {
-    const hideHeader = await ChromeStorage.fetchStorageValue(
+async function handleMessage(msg: string): Promise<void> {
+  if (msg === TOGGLE_HEADER_MESSAGE) {
+    const hideHeader = !(await ChromeStorage.fetchStorageValue(
       HIDE_HEADER_STORAGE_KEY,
-    );
-    ChromeStorage.setStorageKey(HIDE_HEADER_STORAGE_KEY, !hideHeader);
+    ));
+    // Persist the setting on every page so the popup switch stays in sync,
+    // but only touch the DOM when theater mode is active.
+    ChromeStorage.setStorageKey(HIDE_HEADER_STORAGE_KEY, hideHeader);
+    if (!globalThis.initializedVideoPage) return;
 
-    HeaderAction.toggleHeader(!(hideHeader as boolean));
-    HeaderAction.toggleHeaderTheater(true);
-    VideoWrapperAction.toggleVideoPlayerSpacing(!(hideHeader as boolean));
+    HeaderAction.toggleHeader(hideHeader);
+    HeaderAction.toggleHeaderTheater(true, hideHeader);
+    VideoWrapperAction.toggleVideoPlayerSpacing(hideHeader);
   }
 
-  if (req.msg === TOGGLE_SCROLLBAR_MESSAGE) {
-    const removeScrollbar = await ChromeStorage.fetchStorageValue(
+  if (msg === TOGGLE_SCROLLBAR_MESSAGE) {
+    const removeScrollbar = !(await ChromeStorage.fetchStorageValue(
       REMOVE_SCROLLBAR_STORAGE_KEY,
-    );
-    ChromeStorage.setStorageKey(
-      REMOVE_SCROLLBAR_STORAGE_KEY,
-      !removeScrollbar,
-    );
-    ScrollbarAction.toggleScrollbar(!(removeScrollbar as boolean));
+    ));
+    ChromeStorage.setStorageKey(REMOVE_SCROLLBAR_STORAGE_KEY, removeScrollbar);
+    ScrollbarAction.toggleScrollbar(removeScrollbar);
   }
 
-  if (req.msg === CLEAR_ELEMENT_STATE_MESSAGE) {
+  if (msg === CLEAR_ELEMENT_STATE_MESSAGE) {
     NavigationHandler.handle();
   }
+}
+
+chrome.runtime.onMessage.addListener((req) => {
+  void handleMessage(req.msg);
 });

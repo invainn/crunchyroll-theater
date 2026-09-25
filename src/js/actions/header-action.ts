@@ -8,7 +8,25 @@ import { ChromeStorage } from "../utils/chrome-storage";
 
 export class HeaderAction implements ElementAction {
   initialized: boolean = false;
-  static scheduledAnimationFrame: boolean = false;
+  // Debounces hover to one DOM update per frame. The latest hover state
+  // wins, so a leave arriving in the same frame as an enter is not lost.
+  static pendingFrame: number | null = null;
+  static pendingHideHeader: boolean = false;
+
+  static scheduleToggleHeader(hideHeader: boolean): void {
+    HeaderAction.pendingHideHeader = hideHeader;
+    if (HeaderAction.pendingFrame !== null) return;
+    HeaderAction.pendingFrame = requestAnimationFrame(() => {
+      HeaderAction.pendingFrame = null;
+      HeaderAction.toggleHeader(HeaderAction.pendingHideHeader);
+    });
+  }
+
+  static cancelScheduledToggle(): void {
+    if (HeaderAction.pendingFrame === null) return;
+    cancelAnimationFrame(HeaderAction.pendingFrame);
+    HeaderAction.pendingFrame = null;
+  }
 
   canExecuteAction(): boolean {
     if (this.initialized) return false;
@@ -28,7 +46,7 @@ export class HeaderAction implements ElementAction {
     ChromeStorage.fetchStorageValue(HIDE_HEADER_STORAGE_KEY).then(
       (hideHeader) => {
         HeaderAction.toggleHeader(hideHeader as boolean);
-        HeaderAction.toggleHeaderTheater(true);
+        HeaderAction.toggleHeaderTheater(true, hideHeader as boolean);
       },
     );
   }
@@ -46,39 +64,25 @@ export class HeaderAction implements ElementAction {
     }
   }
 
-  static toggleHeaderTheater(headerTheaterOn: boolean): void {
+  static toggleHeaderTheater(
+    headerTheaterOn: boolean,
+    hideHeader: boolean,
+  ): void {
     const headers = document.getElementsByClassName(HEADER);
     if (headers.length === 0) return;
     const header = headers[0] as HTMLElement;
-    ChromeStorage.fetchStorageValue(HIDE_HEADER_STORAGE_KEY).then(
-      (hideHeader) => {
-        if (headerTheaterOn && hideHeader) {
-          header.classList.add("ct-header-theater");
+    if (headerTheaterOn && hideHeader) {
+      header.classList.add("ct-header-theater");
 
-          header.onmouseenter = () => {
-            if (HeaderAction.scheduledAnimationFrame) return;
-            HeaderAction.scheduledAnimationFrame = true;
-            requestAnimationFrame(() => {
-              HeaderAction.toggleHeader(false);
-              HeaderAction.scheduledAnimationFrame = false;
-            });
-          };
-
-          header.onmouseleave = () => {
-            if (HeaderAction.scheduledAnimationFrame) return;
-            HeaderAction.scheduledAnimationFrame = true;
-            requestAnimationFrame(() => {
-              HeaderAction.toggleHeader(true);
-              HeaderAction.scheduledAnimationFrame = false;
-            });
-          };
-        } else {
-          header.classList.remove("ct-header-theater");
-          header.onmouseenter = null;
-          header.onmouseleave = null;
-          HeaderAction.toggleHeader(false);
-        }
-      },
-    );
+      header.onmouseenter = () => HeaderAction.scheduleToggleHeader(false);
+      header.onmouseleave = () => HeaderAction.scheduleToggleHeader(true);
+    } else {
+      // A queued hover update must not re-hide the header after this.
+      HeaderAction.cancelScheduledToggle();
+      header.classList.remove("ct-header-theater");
+      header.onmouseenter = null;
+      header.onmouseleave = null;
+      HeaderAction.toggleHeader(false);
+    }
   }
 }

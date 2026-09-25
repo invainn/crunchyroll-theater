@@ -18,31 +18,32 @@ function elementsExistByClassName(...classNames: string[]): boolean {
 
 export class NavigationHandler {
   static handle(): void {
-    ChromeStorage.fetchStorageValue(HIDE_HEADER_STORAGE_KEY).then(
-      (hideHeader) => {
-        if (
-          elementsExistByClassName(HEADER, HEADER_CONTAINER, VIDEO_WRAPPER)
-        ) {
-          if (globalThis.initializedVideoPage) return;
-
-          globalThis.initializedVideoPage = true;
-          HeaderAction.toggleHeader(hideHeader as boolean);
-          HeaderAction.toggleHeaderTheater(true);
-          VideoWrapperAction.toggleVideoPlayerSpacing(hideHeader as boolean);
-        } else if (elementsExistByClassName(HEADER, HEADER_CONTAINER)) {
-          if (!globalThis.initializedVideoPage) return;
-
-          globalThis.initializedVideoPage = false;
-          HeaderAction.toggleHeader(false);
-          HeaderAction.toggleHeaderTheater(false);
-        }
-      },
-    );
+    // Check the DOM before touching storage: this runs on every mutation,
+    // and only a watch page <-> non-watch page transition needs the setting.
+    if (elementsExistByClassName(HEADER, HEADER_CONTAINER, VIDEO_WRAPPER)) {
+      if (!globalThis.initializedVideoPage) {
+        globalThis.initializedVideoPage = true;
+        ChromeStorage.fetchStorageValue(HIDE_HEADER_STORAGE_KEY).then(
+          (hideHeader) => {
+            if (!globalThis.initializedVideoPage) return;
+            HeaderAction.toggleHeader(hideHeader as boolean);
+            HeaderAction.toggleHeaderTheater(true, hideHeader as boolean);
+            VideoWrapperAction.toggleVideoPlayerSpacing(hideHeader as boolean);
+          },
+        );
+      }
+    } else if (elementsExistByClassName(HEADER, HEADER_CONTAINER)) {
+      if (globalThis.initializedVideoPage) {
+        globalThis.initializedVideoPage = false;
+        HeaderAction.toggleHeader(false);
+        HeaderAction.toggleHeaderTheater(false, false);
+      }
+    }
 
     if (!ScrollbarAction.initialized) {
+      ScrollbarAction.initialized = true;
       ChromeStorage.fetchStorageValue(REMOVE_SCROLLBAR_STORAGE_KEY).then(
         (removeScrollBar) => {
-          ScrollbarAction.initialized = true;
           ScrollbarAction.toggleScrollbar(removeScrollBar as boolean);
         },
       );
