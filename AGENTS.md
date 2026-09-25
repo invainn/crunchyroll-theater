@@ -2,7 +2,7 @@
 
 ## Project
 
-Chrome Extension (Manifest V3) that provides theater mode for Crunchyroll's video player. TypeScript compiled via Rollup. No test suite — build success is the verification step.
+Chrome Extension (Manifest V3) that provides theater mode for Crunchyroll's video player. TypeScript compiled via Rollup. Playwright tests live in `tests/` (see `tests/README.md`).
 
 ## Package Manager
 
@@ -12,11 +12,12 @@ Use **pnpm** exclusively. Do not use npm or yarn.
 pnpm install       # install dependencies
 pnpm build         # compile TypeScript + SCSS
 pnpm format        # run prettier
+pnpm test          # build + fixture Playwright tests
 ```
 
 ## Build Verification
 
-Always run `pnpm build` after making changes. A clean build with no TypeScript errors is required before committing.
+Always run `pnpm test` (builds, then runs the fixture suite) after making changes. It must pass before committing.
 
 ## Git
 
