@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Vilos player (fixture)</title>
+    <style>
+      body {
+        margin: 0;
+        background: #000;
+      }
+      #vilosRoot {
+        height: 50vh;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      // The real player mounts #vilosRoot after load.
+      setTimeout(() => {
+        const root = document.createElement("div");
+        root.id = "vilosRoot";
+        root.innerHTML = `<video></video>`;
+        document.body.appendChild(root);
+      }, 100);
+    </script>
+  </body>
+</html>

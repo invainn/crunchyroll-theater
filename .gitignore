@@ -4,3 +4,7 @@ public/**/*.js
 *.log
 *.map
 dist/**/*
+# Playwright
+/test-results/
+/playwright-report/
+/.auth/
